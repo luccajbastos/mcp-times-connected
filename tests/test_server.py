@@ -112,3 +112,17 @@ async def test_write_tool_docstrings_mention_timeout_check():
     for name in ("agendar_aula", "cancelar_aula"):
         assert "listar_minhas_aulas" in tools[name].description
         assert "timeout" in tools[name].description.lower()
+
+
+def test_server_instructions_mention_english_school():
+    text = (server.mcp.instructions or "").lower()
+    for word in ("inglês", "times idiomas", "times connected", "aula"):
+        assert word in text
+
+
+async def test_list_tools_descriptions_are_discoverable():
+    tools = {t.name: t for t in await server.mcp.list_tools()}
+    desc = tools["listar_horarios_disponiveis"].description.lower()
+    for word in ("inglês", "times idiomas", "semana"):
+        assert word in desc
+    assert "inglês" in tools["listar_minhas_aulas"].description.lower()

@@ -6,7 +6,25 @@ from mcp.server.fastmcp import FastMCP
 
 from connected_mcp.client import DEFAULT_BASE, ApiError, AuthError, ConnectedClient
 
-mcp = FastMCP("connected")
+INSTRUCTIONS = """\
+Agenda de aulas de inglês do usuário na escola Times Idiomas, pela plataforma
+Times Connected (timesconnected.com.br).
+
+Use estas ferramentas sempre que o usuário falar das aulas de inglês dele, da
+escola de inglês, de "Times", "Times Idiomas" ou "Connected": horários livres,
+aulas da semana, próxima aula, marcar/agendar, desmarcar/cancelar. "Times"
+aqui é a escola de inglês, não o Microsoft Teams nem o Google Calendar.
+
+Tipos de aula: Lesson (aula regular do livro), Conversation (Insight e
+Know-how), Song Class, Movie Class e Special Class.
+
+Para "essa semana", "amanhã" etc., converta para datas YYYY-MM-DD a partir da
+data de hoje e chame listar_horarios_disponiveis. Os horários com booked=true
+são as aulas que o aluno já marcou. Antes de agendar ou cancelar, confirme
+dia, hora, tipo de aula e professor com o usuário.
+"""
+
+mcp = FastMCP("connected", instructions=INSTRUCTIONS)
 
 _client = None
 
@@ -40,8 +58,11 @@ def _error_text(exc: Exception) -> str:
 async def listar_horarios_disponiveis(
     data_inicio: str, data_fim: str, tipo_aula: str | None = None
 ) -> list[dict]:
-    """Lista os horários de aula disponíveis para agendamento.
+    """Lista as aulas de inglês disponíveis na Times Idiomas (Times Connected) num período.
 
+    Use para perguntas como "quais aulas de inglês tem essa semana?", "tem aula
+    amanhã à noite?" ou "quais aulas eu marquei?" (filtre booked=true).
+    Inclui todos os tipos: Lesson, Conversation, Song Class, Movie Class, Special Class.
     As datas usam o formato YYYY-MM-DD. Os resultados (class_id, date, hour,
     teacher_id) alimentam a ferramenta agendar_aula. tipo_aula é opcional.
     booked=true significa que o aluno já está nesse horário.
@@ -55,8 +76,10 @@ async def listar_horarios_disponiveis(
 
 @mcp.tool()
 async def listar_minhas_aulas() -> list[dict]:
-    """Retorna a próxima aula agendada do aluno (a API expõe apenas a próxima),
-    útil para cancelar_aula."""
+    """Retorna a próxima aula de inglês agendada do aluno na Times Idiomas (Times Connected).
+
+    A API expõe apenas a próxima aula; para ver todas as aulas marcadas num período,
+    use listar_horarios_disponiveis e filtre booked=true. Útil para cancelar_aula."""
     try:
         slots = await _get_client().list_my_classes()
     except (AuthError, ApiError) as exc:
@@ -66,7 +89,7 @@ async def listar_minhas_aulas() -> list[dict]:
 
 @mcp.tool()
 async def agendar_aula(class_id: str, date: str, hour: str, teacher_id: str) -> str:
-    """Agenda uma aula. Altera a agenda real do aluno. Confirme data, hora e professor com o usuário antes de chamar.
+    """Agenda (marca) uma aula de inglês na Times Idiomas (Times Connected). Altera a agenda real do aluno. Confirme data, hora e professor com o usuário antes de chamar.
 
     Use os valores retornados por listar_horarios_disponiveis (data YYYY-MM-DD, hora HH:MM).
     Em caso de timeout, verifique com listar_minhas_aulas antes de tentar de novo.
@@ -79,7 +102,7 @@ async def agendar_aula(class_id: str, date: str, hour: str, teacher_id: str) -> 
 
 @mcp.tool()
 async def cancelar_aula(class_id: str, date: str, hour: str, teacher_id: str) -> str:
-    """Cancela uma aula agendada. Altera a agenda real do aluno. Confirme data, hora e professor com o usuário antes de chamar.
+    """Cancela (desmarca) uma aula de inglês agendada na Times Idiomas (Times Connected). Altera a agenda real do aluno. Confirme data, hora e professor com o usuário antes de chamar.
 
     Use os valores retornados por listar_minhas_aulas (data YYYY-MM-DD, hora HH:MM).
     Em caso de timeout, verifique com listar_minhas_aulas antes de tentar de novo.
