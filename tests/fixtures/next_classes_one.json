@@ -1,0 +1,1 @@
+{"status":"success","data":{"id":1000001,"class_id":19,"student_id":12345,"date":"2026-11-16","hour":"17:00","teacher_id":1414,"date_hour":"2026-11-16 17:00:00","class_name":"Lesson 18","type_class":"online","teacher":{"id":1414,"name":"X","nickname":"Teacher Maria"},"class_type":{"id":19,"name":"X"}}}
