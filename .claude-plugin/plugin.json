@@ -44,5 +44,6 @@
         "CONNECTED_PASSWORD": "${user_config.senha}"
       }
     }
-  }
+  },
+  "license": "MIT"
 }

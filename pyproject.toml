@@ -3,6 +3,7 @@ name = "connected-mcp"
 version = "0.1.0"
 description = "MCP server para o agendador de aulas Times Connected"
 requires-python = ">=3.11"
+license = "MIT"
 dependencies = ["mcp>=1.2,<2", "httpx"]
 
 [project.scripts]

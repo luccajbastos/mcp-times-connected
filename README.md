@@ -145,3 +145,7 @@ Detalhes em [docs/ferramentas.md](docs/ferramentas.md).
 - [docs/arquitetura.md](docs/arquitetura.md): como o servidor é organizado
 - [docs/api.md](docs/api.md): a API do Times Connected, mapeada a partir do app web
 - [docs/desenvolvimento.md](docs/desenvolvimento.md): testes, fixtures e como contribuir
+
+## Licença
+
+[MIT](LICENSE)
