@@ -1,0 +1,15 @@
+{
+  "name": "mcp-times-connected",
+  "description": "Plugin não oficial para agendar aulas no Times Connected pelo Claude.",
+  "owner": {
+    "name": "Lucca Bastos",
+    "url": "https://github.com/luccajbastos"
+  },
+  "plugins": [
+    {
+      "name": "times-connected",
+      "source": "./",
+      "description": "Consulte horários, agende e cancele aulas no Times Connected."
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "name": "times-connected",
+  "displayName": "Times Connected",
+  "version": "0.1.0",
+  "description": "Consulte horários, agende e cancele aulas no Times Connected (Times Idiomas). Projeto não oficial.",
+  "author": {
+    "name": "Lucca Bastos",
+    "url": "https://github.com/luccajbastos"
+  },
+  "homepage": "https://github.com/luccajbastos/mcp-times-connected",
+  "repository": "https://github.com/luccajbastos/mcp-times-connected",
+  "keywords": [
+    "times-idiomas",
+    "agendamento",
+    "aulas",
+    "mcp"
+  ],
+  "userConfig": {
+    "login": {
+      "type": "string",
+      "title": "Login do Times Connected",
+      "description": "O mesmo login que você usa no site timesconnected.com.br",
+      "required": true
+    },
+    "senha": {
+      "type": "string",
+      "title": "Senha do Times Connected",
+      "description": "Guardada no cofre de credenciais do sistema, nunca em arquivo",
+      "required": true,
+      "sensitive": true
+    }
+  },
+  "mcpServers": {
+    "connected": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "${CLAUDE_PLUGIN_ROOT}",
+        "connected-mcp"
+      ],
+      "env": {
+        "CONNECTED_USER": "${user_config.login}",
+        "CONNECTED_PASSWORD": "${user_config.senha}"
+      }
+    }
+  }
+}

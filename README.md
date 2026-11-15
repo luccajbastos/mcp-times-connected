@@ -15,32 +15,51 @@ O Claude lista os horários, confirma o horário e o professor com você e só e
 
 ## Requisitos
 
-- Python 3.11 ou superior
+- Python 3.11 ou superior (o uv instala automaticamente)
 - [uv](https://docs.astral.sh/uv/)
 - Uma conta de aluno no Times Connected
 
 ## Instalação
+
+### 1. Instale o uv (uma vez só)
+
+O plugin roda em Python através do [uv](https://docs.astral.sh/uv/).
+
+Windows (PowerShell):
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+macOS / Linux:
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+### 2. Instale o plugin
+
+**Claude Desktop:** Customize → Plugins → **+ Add** → adicione o marketplace `luccajbastos/mcp-times-connected` e instale **Times Connected**.
+
+**Claude Code:**
+```
+/plugin marketplace add luccajbastos/mcp-times-connected
+/plugin install times-connected@mcp-times-connected
+```
+
+### 3. Informe login e senha
+
+Ao ativar o plugin, o Claude pede o seu login e a sua senha do Times Connected. A senha fica no cofre de credenciais do sistema, nunca em arquivo. Para alterar depois, use `/plugin configure times-connected@mcp-times-connected`.
+
+Pronto: peça ao Claude "quais aulas tem amanhã?".
+
+## Instalação manual (sem plugin)
+
+Para outros clientes MCP, ou se preferir configurar à mão:
 
 ```bash
 git clone https://github.com/luccajbastos/mcp-times-connected.git
 cd mcp-times-connected
 uv sync
 ```
-
-## Configuração
-
-### Claude Code
-
-```bash
-claude mcp add connected -s user \
-  -e CONNECTED_USER=<seu-login> \
-  -e CONNECTED_PASSWORD=<sua-senha> \
-  -- uv run --directory <caminho-do-projeto> connected-mcp
-```
-
-Reinicie o Claude Code e confira com `/mcp`.
-
-### Claude Desktop e outros clientes
 
 Adicione a `mcpServers` no arquivo de configuração do cliente:
 
