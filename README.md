@@ -15,64 +15,110 @@ O Claude lista os horários, confirma o horário e o professor com você e só e
 
 ## Requisitos
 
-- Python 3.11 ou superior (o uv instala automaticamente)
+- Claude Desktop ou Claude Code
 - [uv](https://docs.astral.sh/uv/)
 - Uma conta de aluno no Times Connected
 
-## Instalação
+## Instalação no Claude Desktop
 
-### 1. Instale o uv (uma vez só)
+São 4 passos, cerca de 5 minutos. Você não precisa baixar este repositório: o Claude Desktop busca o código direto do GitHub.
 
-O plugin roda em Python através do [uv](https://docs.astral.sh/uv/).
+### Passo 1: instale o uv (uma vez só)
 
-Windows (PowerShell):
+O servidor é escrito em Python e roda pelo [uv](https://docs.astral.sh/uv/), que baixa o Python e as dependências sozinho.
+
+**Windows:** abra o **PowerShell** (menu Iniciar → digite "PowerShell" → Enter), cole o comando abaixo e aperte Enter:
+
 ```powershell
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
-macOS / Linux:
+**macOS:** abra o **Terminal**, cole o comando abaixo e aperte Enter:
+
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-### 2. Instale o plugin
+Para conferir, **feche e abra o terminal de novo** e rode `uvx --version`. Se aparecer um número de versão, está pronto.
 
-**Claude Desktop:** Customize → Plugins → **+ Add** → adicione o marketplace `luccajbastos/mcp-times-connected` e instale **Times Connected**.
+### Passo 2: abra o arquivo de configuração do Claude Desktop
 
-**Claude Code:**
+No Claude Desktop, abra **Settings → Developer → Edit Config**. Isso mostra o arquivo `claude_desktop_config.json` na pasta dele. Abra esse arquivo com o Bloco de Notas (Windows) ou o TextEdit (macOS).
+
+Se não encontrar o menu, o arquivo fica em:
+
+| Sistema | Caminho |
+|---|---|
+| Windows (instalado do site) | `%APPDATA%\Claude\claude_desktop_config.json` |
+| Windows (Microsoft Store) | `%LOCALAPPDATA%\Claude-Data\<pasta-do-claude>\claude_desktop_config.json` |
+| macOS | `~/Library/Application Support/Claude/claude_desktop_config.json` |
+
+### Passo 3: adicione o servidor
+
+Troque `SEU_LOGIN` e `SUA_SENHA` pelo login e pela senha que você usa no site do Times Connected.
+
+**Se o arquivo estiver vazio ou não existir**, deixe ele exatamente assim:
+
+```json
+{
+  "mcpServers": {
+    "times-connected": {
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/luccajbastos/mcp-times-connected", "connected-mcp"],
+      "env": {
+        "CONNECTED_USER": "SEU_LOGIN",
+        "CONNECTED_PASSWORD": "SUA_SENHA"
+      }
+    }
+  }
+}
+```
+
+**Se o arquivo já tiver conteúdo**, não apague nada. Adicione o bloco `"times-connected": { ... }` dentro de `"mcpServers"`, ou crie a chave `"mcpServers"` no nível principal, separando do conteúdo anterior com vírgula. Se quiser conferir se o JSON ficou válido, cole o conteúdo em [jsonlint.com](https://jsonlint.com).
+
+Salve o arquivo.
+
+### Passo 4: reinicie o Claude Desktop por completo
+
+Fechar a janela não basta, porque o Claude continua rodando em segundo plano.
+
+- **Windows:** na barra de tarefas, clique na setinha **^** perto do relógio, clique com o **botão direito** no ícone do Claude e escolha **Quit**. Depois abra o Claude pelo menu Iniciar.
+- **macOS:** com o Claude em primeiro plano, aperte **Cmd+Q**. Depois abra o Claude de novo.
+
+### Pronto: teste
+
+Abra uma **conversa nova** e pergunte:
+
+> Quais aulas tem na Times Connected na quinta-feira?
+
+Acima da resposta deve aparecer **"Used Times-connected"**. Na primeira vez, a resposta pode levar alguns segundos, enquanto o uv baixa o código.
+
+### Se não funcionar
+
+| Sintoma | O que fazer |
+|---|---|
+| O Claude não usa a ferramenta e fala de Microsoft Teams ou do seu calendário | O servidor não carregou. Confira se o JSON do passo 3 está válido e se você reiniciou com **Quit** (passo 4). |
+| O log mostra `spawn uvx ENOENT` | O Desktop não achou o `uvx`. Em `"command"`, troque `"uvx"` pelo caminho completo: no Windows, `C:\\Users\\<seu-usuario>\\.local\\bin\\uvx.exe`; no macOS, rode `which uvx` no Terminal e use o resultado. |
+| Erro de login | Confira `CONNECTED_USER` e `CONNECTED_PASSWORD`. Teste o mesmo login e a mesma senha no site. |
+
+O log do servidor fica na pasta de logs do Claude, no arquivo `mcp-server-times-connected.log`:
+- **Windows:** `%LOCALAPPDATA%\Claude\logs\` (ou `%APPDATA%\Claude\logs\`, conforme a instalação)
+- **macOS:** `~/Library/Logs/Claude/`
+
+> **Não use o menu Plugins do Desktop para este projeto.** O Desktop não aceita os campos de login e senha do plugin e descarta o servidor. Use a configuração acima.
+
+## Instalação no Claude Code
+
+Com o uv instalado (passo 1 acima), rode no Claude Code:
+
 ```
 /plugin marketplace add luccajbastos/mcp-times-connected
 /plugin install times-connected@mcp-times-connected
 ```
 
-### 3. Informe login e senha
+O Claude Code pede o login e a senha, e a senha fica no cofre de credenciais do sistema. Reinicie o Claude Code e confira com `/mcp`. Para trocar a senha depois, use `/plugin configure times-connected@mcp-times-connected`.
 
-Ao ativar o plugin, o Claude pede o seu login e a sua senha do Times Connected. A senha fica no cofre de credenciais do sistema, nunca em arquivo. Para alterar depois, use `/plugin configure times-connected@mcp-times-connected`.
-
-Pronto: peça ao Claude "quais aulas tem amanhã?".
-
-## Instalação manual (sem plugin)
-
-Para outros clientes MCP, ou se preferir configurar à mão:
-
-```bash
-git clone https://github.com/luccajbastos/mcp-times-connected.git
-cd mcp-times-connected
-uv sync
-```
-
-Adicione a `mcpServers` no arquivo de configuração do cliente:
-
-```json
-"connected": {
-  "command": "uv",
-  "args": ["run", "--directory", "<caminho-do-projeto>", "connected-mcp"],
-  "env": {
-    "CONNECTED_USER": "<seu-login>",
-    "CONNECTED_PASSWORD": "<sua-senha>"
-  }
-}
-```
+## Variáveis de ambiente
 
 | Variável | Obrigatória | Descrição |
 |---|---|---|
@@ -80,7 +126,7 @@ Adicione a `mcpServers` no arquivo de configuração do cliente:
 | `CONNECTED_PASSWORD` | sim | Senha do aluno |
 | `CONNECTED_API_BASE` | não | URL base alternativa da API |
 
-As credenciais ficam apenas na configuração do cliente MCP. O servidor não grava nada em disco, e o token de sessão fica só na memória.
+O servidor não grava nada em disco, e o token de sessão fica só na memória. Na configuração do Claude Desktop, a senha fica em texto puro no `claude_desktop_config.json`; não compartilhe esse arquivo.
 
 ## Ferramentas
 
