@@ -22,6 +22,14 @@ Para "essa semana", "amanhã" etc., converta para datas YYYY-MM-DD a partir da
 data de hoje e chame listar_horarios_disponiveis. Os horários com booked=true
 são as aulas que o aluno já marcou. Antes de agendar ou cancelar, confirme
 dia, hora, tipo de aula e professor com o usuário.
+
+Formato da resposta: ao listar aulas, responda SEMPRE com uma tabela em
+Markdown, com os dias nas linhas (ex.: "Seg 16") e os tipos de aula nas
+colunas (Lesson, Song Class, Movie Class, Conversation, Special Class). Em cada
+célula, liste os horários (ex.: "8h, 18h"). Marque com ✅ as aulas que o aluno
+já agendou, com o nome do professor (ex.: "**17h ✅ (Maria)**"). Dias sem aula
+aparecem com "Nenhuma aula disponível". Omita colunas que ficariam vazias em
+todos os dias. Depois da tabela, ofereça mostrar os professores ou agendar.
 """
 
 mcp = FastMCP("connected", instructions=INSTRUCTIONS)

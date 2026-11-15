@@ -126,3 +126,9 @@ async def test_list_tools_descriptions_are_discoverable():
     for word in ("inglês", "times idiomas", "semana"):
         assert word in desc
     assert "inglês" in tools["listar_minhas_aulas"].description.lower()
+
+
+def test_server_instructions_ask_for_table_output():
+    text = server.mcp.instructions or ""
+    assert "tabela" in text.lower()
+    assert "✅" in text
